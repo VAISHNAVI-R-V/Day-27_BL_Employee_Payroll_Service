@@ -12,39 +12,60 @@ import java.util.List;
 import java.util.Scanner;
 
 public class EmployeePayrollService {
-    private List<EmployeePayrollData> employeePayRollList;
+    public List<EmployeePayrollData> employeePayrollList;
 
-    public EmployeePayrollService(List<EmployeePayrollData>employeePayRollList) {
-        this.employeePayRollList = employeePayRollList;
+    public enum IOService {CONSOLE_IO, FILE_IO}
+
+    public EmployeePayrollService(List<EmployeePayrollData> employeePayrollList) {
+        this.employeePayrollList = employeePayrollList;
     }
 
-    // main method
+    public EmployeePayrollService() {
+        employeePayrollList = new ArrayList<>();
+    }
+
     public static void main(String[] args) {
-        ArrayList<EmployeePayrollData> employeePayrollList = new ArrayList<>();
-        EmployeePayrollService employeePayrollService = new EmployeePayrollService(employeePayrollList);
+        EmployeePayrollService employeePayrollService = new EmployeePayrollService();
         Scanner consoleInputReader = new Scanner(System.in);
+        employeePayrollService.printWelcomeMessage();
         employeePayrollService.readEmployeePayrollData(consoleInputReader);
-        employeePayrollService.writeEmployeePayrollData();
+        employeePayrollService.writeEmployeePayrollData(IOService.FILE_IO);
+    }
+
+    /* This method is implementing Welcome Message */
+    public void printWelcomeMessage() {
+        System.out.println("Welcome To The Employee Payroll Service System");
     }
 
     /**
-     * @purpose: to read employee payroll data from user input.
-     * @param consoleInputReader
+     * Purpose : To read the information of Employees from the console
+     *
+     * @param consoleInputReader takes the information of employees
      */
     private void readEmployeePayrollData(Scanner consoleInputReader) {
-        System.out.println("Enter Employee ID:  ");
+        System.out.println("Enter Employee ID : ");
         int id = consoleInputReader.nextInt();
-        System.out.println("Enter Employee name :  ");
-        String name = consoleInputReader.next();
+        consoleInputReader.nextLine();
+        System.out.println("Enter Employee Name : ");
+        String name = consoleInputReader.nextLine();
         System.out.println("Enter Employee Salary : ");
         double salary = consoleInputReader.nextDouble();
-        employeePayRollList.add(new EmployeePayrollData(id, name, salary));
+        employeePayrollList.add(new EmployeePayrollData(id, name, salary));
     }
 
-    /**
-     * @purpose: Method to write EmployeePayroll data to Console.
-     */
-    private void writeEmployeePayrollData() {
-        System.out.println("\nWriting Employee Payroll Roaster to Console\n" + employeePayRollList);
+    /* This method is implementing to write the Employee Payroll to the console */
+    public void writeEmployeePayrollData(IOService ioService) {
+        if (ioService.equals(IOService.CONSOLE_IO))
+            System.out.println("\nWriting Employee Payroll Roaster to console\n" + employeePayrollList);
+        else if (ioService.equals(IOService.FILE_IO)) {
+            new EmployeePayrollFileIOService().writeData(employeePayrollList);
+        }
+    }
+
+    /* This method is implementing to count entries in a file */
+    public long countEntries(IOService ioService) {
+        if (ioService.equals(IOService.FILE_IO))
+            return new EmployeePayrollFileIOService().countEntries();
+        return 0;
     }
 }
