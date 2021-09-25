@@ -35,4 +35,12 @@ public class EmployeePayrollFileIOService {
         return entries;
     }
 
+    // method to print the lines in the file
+    public void printData() {
+        try {
+            Files.lines(new File("payroll-file.txt").toPath()).forEach(System.out::println);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
